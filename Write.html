@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penpal - Write a Letter</title>
+    
+    <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #fcd0df;
+            height: 100vh;
+            font-family: 'DynaPuff', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            caret-color: transparent;
+            overflow: hidden;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: flex-start;
+            padding: 15px 30px;
+            z-index: 10;
+        }
+
+        .nav-icon { font-size: 2rem; color: #4a2c2a; cursor: pointer; }
+
+        .desk-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 10px 40px;
+            position: relative;
+            min-height: 0;
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 620px;
+            height: 420px;
+            background-color: #f8e6ec;
+            border: 3px solid #4a2c2a;
+            transform: rotate(-3deg);
+            z-index: 1;
+            box-shadow: 15px 15px 0px rgba(74, 44, 42, 0.05);
+        }
+
+        /* STATIONERY */
+        .stationery {
+            background-color: white;
+            width: 480px;
+            height: 85%;
+            max-height: 580px;
+            padding: 30px 40px 70px 40px;
+            box-shadow: 10px 10px 0px rgba(74, 44, 42, 0.05);
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* SCROLLABLE WRITING AREA */
+        .letter-content {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            font-family: sans-serif;
+            font-size: 1.1rem;
+            background: repeating-linear-gradient(white, white 30px, #f1f1f1 31px);
+            line-height: 31px;
+            caret-color: #4a2c2a;
+            user-select: text;
+            overflow-y: auto;
+            text-align: left;
+            padding-right: 10px;
+            padding-bottom: 60px; 
+        }
+
+        .letter-content::-webkit-scrollbar { width: 8px; }
+        .letter-content::-webkit-scrollbar-track { background: #f1f1f1; }
+        .letter-content::-webkit-scrollbar-thumb { background: #fcd0df; border-radius: 10px; }
+
+        .letter-content:empty:before {
+            content: attr(placeholder);
+            color: gray;
+        }
+
+        /* Fixed SEND Button */
+        .send-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 25px;
+            background-color: white;
+            border: 3px solid #4a2c2a;
+            border-radius: 50px;
+            padding: 4px 25px;
+            color: #4a2c2a;
+            font-family: 'DynaPuff', sans-serif;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        .send-btn:hover {
+            background-color: #4a2c2a;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .toolbar {
+            background-color: white;
+            border-top: 4px solid #4a2c2a;
+            display: flex;
+            justify-content: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 5px;
+            padding: 8px 10px;
+            z-index: 100;
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border-right: 1px solid #ddd;
+            padding: 0 8px;
+        }
+
+        .tool-btn, .tool-select {
+            background: none;
+            border: 1px solid #eee;
+            height: 34px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #4a2c2a;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .tool-btn:hover { background-color: #fcd0df; }
+        
+        .tool-btn.active {
+            background-color: #4a2c2a !important;
+            color: #ffffff !important;
+        }
+
+        /* MP3 PLAYER & THEMED DISPLAY SCREEN */
+        .mp3-player { width: 200px; height: 320px; background-color: #f8e6ec; border: 4px solid #4a2c2a; border-radius: 25px; padding: 15px; transform: rotate(-10deg); z-index: 10; position: relative; display: flex; flex-direction: column; align-items: center;}
+        
+        .mp3-screen { 
+            width: 100%; 
+            height: 110px; 
+            background-color: #4a2c2a;
+            border: 2px solid #833b3b; 
+            margin-bottom: 20px; 
+            padding: 8px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .mini-track-node {
+            font-family: sans-serif;
+            font-size: 0.65rem;
+            color: #fcd0df;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin: 0;
+        }
+
+        .mp3-wheel { width: 110px; height: 110px; background-color: white; border: 4px solid #4a2c2a; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        .mp3-center { width: 40px; height: 40px; background-color: #0099ff; border-radius: 50%; border: 2px solid #4a2c2a; color: white; display: flex; justify-content: center; align-items: center; cursor: pointer;}
+        .wire-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+        .sticker-pack { width: 200px; height: 280px; background-color: #f8e6ec; border: 4px solid #4a2c2a; padding: 15px; text-align: center; transform: rotate(8deg); z-index: 10; }
+
+        /* THEMED MUSIC PLAYLIST MODAL SYSTEM */
+        .spotify-modal .modal-content {
+            background-color: #f8e6ec;
+            color: #4a2c2a;
+            border: 4px solid #4a2c2a;
+            border-radius: 20px;
+            font-family: 'DynaPuff', sans-serif;
+        }
+
+        .spotify-modal .modal-header {
+            border-bottom: 2px solid #4a2c2a;
+            color: #4a2c2a;
+        }
+
+        .spotify-search {
+            background-color: white;
+            border: 2px solid #4a2c2a;
+            border-radius: 20px;
+            color: #4a2c2a;
+            padding: 8px 15px;
+            caret-color: #833b3b;
+            font-family: sans-serif;
+        }
+
+        .spotify-search:focus {
+            background-color: white;
+            outline: none;
+            border-color: #833b3b;
+            box-shadow: none;
+            color: #4a2c2a;
+        }
+
+        .track-list {
+            max-height: 280px;
+            overflow-y: auto;
+            margin-top: 15px;
+            padding-right: 5px;
+        }
+
+        .track-list::-webkit-scrollbar { width: 6px; }
+        .track-list::-webkit-scrollbar-thumb { background: #4a2c2a; border-radius: 10px; }
+
+        .track-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 6px;
+            background-color: white;
+            border: 2px solid #4a2c2a;
+            border-radius: 12px;
+            font-family: sans-serif;
+            transition: transform 0.2s;
+        }
+
+        .track-item:hover { transform: translateY(-2px); }
+
+        .track-checkbox {
+            accent-color: #833b3b;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .spotify-save-btn {
+            background-color: #4a2c2a;
+            color: white;
+            border-radius: 20px;
+            font-family: 'DynaPuff', sans-serif;
+            border: none;
+            padding: 8px 25px;
+            transition: all 0.2s;
+        }
+
+        .spotify-save-btn:hover {
+            transform: scale(1.05);
+            background-color: #833b3b;
+            color: #fcd0df;
+        }
+
+        /* --- STICKER BOOK MODAL SYSTEM (REVISED WITH CUSTOM SCROLLBAR) --- */
+        .sticker-modal .modal-content {
+            background-color: #f8e6ec;
+            border: 4px solid #4a2c2a;
+            border-radius: 0px; 
+            padding: 20px;
+            position: relative;
+        }
+
+        .sticker-modal-header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .sticker-top-title {
+            font-family: 'DynaPuff', sans-serif;
+            font-size: 2.2rem;
+            color: #4a2c2a;
+            text-align: center;
+            margin: 0;
+            text-transform: lowercase;
+            user-select: none;
+        }
+
+        /* Circular Close Button (X) */
+        .sticker-modal-close-trigger {
+            position: absolute;
+            right: 0;
+            top: 5px;
+            width: 36px;
+            height: 36px;
+            background-color: white;
+            border: 3px solid #4a2c2a;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+            color: #4a2c2a;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            z-index: 10;
+        }
+
+        .sticker-modal-close-trigger:hover {
+            background-color: #4a2c2a;
+            color: white;
+        }
+
+        /* Scrollable container setup matching your sketchy vertical bar layout */
+        .sticker-scroll-wrapper {
+            max-height: 280px; /* Controls the frame size */
+            overflow-y: auto;   /* Turns on the vertical scroll bar functionality */
+            padding-right: 15px; /* Leaves clean room for our custom styled slider track */
+        }
+
+        /* Custom Scrollbar styling to match the sketch slider design */
+        .sticker-scroll-wrapper::-webkit-scrollbar {
+            width: 20px;
+        }
+        
+        .sticker-scroll-wrapper::-webkit-scrollbar-track {
+            border: 2px solid #4a2c2a;
+            border-radius: 20px;
+            /* Creates the diagonal striped design matching your container sketch background */
+            background: repeating-linear-gradient(135deg, #f8e6ec, #f8e6ec 6px, #ffffff 6px, #ffffff 12px);
+        }
+        
+        .sticker-scroll-wrapper::-webkit-scrollbar-thumb {
+            background-color: #4a2c2a;
+            border-radius: 10px;
+            border: 2px solid #f8e6ec; /* Smooth spacer boundary around thumb handle */
+        }
+
+        /* Grid Layout mapping 4 columns smoothly across the scroll pane view */
+        .sticker-sketch-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .sticker-box-slot {
+            background-color: white;
+            border: 2px solid #4a2c2a;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .sticker-box-slot:hover {
+            transform: scale(1.05);
+            box-shadow: 4px 4px 0px rgba(74, 44, 42, 0.1);
+        }
+
+        .sticker-box-slot img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        /* Placed Sticker Presentation Node styling */
+        .placed-sticker-node {
+            display: inline-block;
+            max-width: 55px;
+            max-height: 55px;
+            margin: 5px;
+            vertical-align: middle;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <i class="bi bi-house-door-fill nav-icon" onclick="location.href='dashboard.html'"></i>
+    </div>
+
+    <div class="desk-container">
+        <svg class="wire-container">
+            <path d="M 350 550 C 250 500, 150 350, 300 150" stroke="#4a2c2a" stroke-width="3" fill="none" />
+            <path d="M 350 550 C 400 450, 200 80, 500 80" stroke="#4a2c2a" stroke-width="3" fill="none" />
+        </svg>
+
+        <div class="mp3-player">
+            <div class="mp3-screen" id="mp3Display">
+                <p class="mini-track-node" style="color: #fcd0df; font-style: italic; opacity: 0.6;">No music added...</p>
+            </div>
+            <div class="mp3-wheel">
+                <div class="mp3-center" data-bs-toggle="modal" data-bs-target="#musicModal"><i class="bi bi-plus"></i></div>
+            </div>
+            <div class="mt-2" style="font-size: 0.8rem;">Playlist Pairing</div>
+            <div style="width: 10px; height: 15px; background: #4a2c2a; position: absolute; bottom: -15px;"></div>
+        </div>
+
+        <div class="envelope-back"></div>
+
+        <div class="stationery">
+            <div id="error-alert" style="display:none; background:#f8e6ec; color:#833b3b; border:2px solid #833b3b; border-radius:10px; padding:8px 12px; font-family:'DynaPuff',sans-serif; font-size:0.85rem; margin-bottom:8px;"></div>
+            <div id="editor" class="letter-content" contenteditable="true" placeholder="Dear Penpal..."></div>
+            <button class="send-btn">SEND</button>
+            <input type="hidden" id="musicTitle" name="musicTitle">
+            <input type="hidden" id="musicPath" name="musicPath">
+        </div>
+
+        <div class="sticker-pack">
+            <div style="font-size: 1.1rem; border-bottom: 2px solid #4a2c2a; margin-bottom: 80px;">Sticker Pack</div>
+            <div class="mp3-center" style="margin: 0 auto;" data-bs-toggle="modal" data-bs-target="#stickerBookModal"><i class="bi bi-plus"></i></div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="tool-group">
+            <input type="color" onchange="format('foreColor', this.value)">
+            <select class="tool-select" onchange="format('fontName', this.value)">
+                <option value="Arial">Arial</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="DynaPuff">DynaPuff</option>
+            </select>
+            <select class="tool-select" onchange="format('fontSize', this.value)">
+                <option value="1">S</option>
+                <option value="3" selected>M</option>
+                <option value="5">L</option>
+            </select>
+        </div>
+
+        <div class="tool-group">
+            <button class="tool-btn" id="tool-bold" onclick="format('bold')"><b>B</b></button>
+            <button class="tool-btn" id="tool-italic" onclick="format('italic')"><i>I</i></button>
+            <button class="tool-btn" id="tool-underline" onclick="format('underline')"><u>U</u></button>
+            <button class="tool-btn" id="tool-strike" onclick="format('strikeThrough')">S</button>
+        </div>
+
+        <div class="tool-group">
+            <button class="tool-btn" id="tool-ol" onclick="format('insertOrderedList')">1.</button>
+            <button class="tool-btn" id="tool-ul" onclick="format('insertUnorderedList')">•</button>
+        </div>
+
+        <div class="tool-group">
+            <button class="tool-btn" id="tool-left" onclick="format('justifyLeft')"><i class="bi bi-text-left"></i></button>
+            <button class="tool-btn" id="tool-center" onclick="format('justifyCenter')"><i class="bi bi-text-center"></i></button>
+            <button class="tool-btn" id="tool-right" onclick="format('justifyRight')"><i class="bi bi-text-right"></i></button>
+        </div>
+
+        <div class="tool-group" style="border:none">
+            <button class="tool-btn" onclick="insertEmoji('😊')">😊</button>
+            <button class="tool-btn" onclick="insertEmoji('💌')">💌</button>
+        </div>
+    </div>
+    
+
+    <div class="modal fade spotify-modal" id="musicModal" tabindex="-1" aria-labelledby="musicModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="musicModalLabel">Select Songs (Max 5)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control spotify-search" id="songSearch" placeholder="🔍 Search track or artist name..." onkeyup="filterTracks()">
+                    
+                    <div class="track-list" id="globalTrackWrapper">
+                        
+                        <div class="track-item">
+                            <div><strong>Starboy</strong> <br><small style="color:#5a3e3c">The Weeknd ft. Daft Punk</small></div>
+                            <input type="checkbox" class="track-checkbox" value="The Weeknd - Starboy" onclick="validateSelectionCount(this)">
+                        </div>
+                        
+                        <div class="track-item">
+                            <div><strong>Despacito</strong> <br><small style="color:#5a3e3c">Luis Fonsi ft. Daddy Yankee</small></div>
+                            <input type="checkbox" class="track-checkbox" value="Luis Fonsi - Despacito" onclick="validateSelectionCount(this)">
+                        </div>
+
+                        <div class="track-item">
+                            <div><strong>Havana</strong> <br><small style="color:#5a3e3c">Camila Cabello ft. Young Thug</small></div>
+                            <input type="checkbox" class="track-checkbox" value="Camila Cabello - Havana" onclick="validateSelectionCount(this)">
+                        </div>
+                      
+                        <div class="track-item">
+                            <div><strong>Girls Like You</strong> <br><small style="color:#5a3e3c">Maroon 5 ft. Cardi B</small></div>
+                            <input type="checkbox" class="track-checkbox" value="Maroon 5 - Girls Like You" onclick="validateSelectionCount(this)">
+                        </div>
+
+                        <div class="track-item">
+                            <div><strong>Thank U, Next</strong> <br><small style="color:#5a3e3c">Ariana Grande</small></div>
+                            <input type="checkbox" class="track-checkbox" value="Ariana Grande - Thank U, Next" onclick="validateSelectionCount(this)">
+                        </div>
+
+                        <div class="track-item">
+                            <div><strong>Sunflower</strong> <br><small style="color:#5a3e3c">Post Malone & Swae Lee</small></div>
+                            <input type="checkbox" class="track-checkbox" value="Post Malone - Sunflower" onclick="validateSelectionCount(this)">
+                        </div>
+
+                        <div class="track-item">
+                            <div><strong>I Like It</strong> <br><small style="color:#5a3e3c">Cardi B, Bad Bunny & J Balvin</small></div>
+                            <input type="checkbox" class="track-checkbox" value="Cardi B - I Like It" onclick="validateSelectionCount(this)">
+                        </div>
+
+                        <div class="track-item">
+                            <div><strong>God's Plan</strong> <br><small style="color:#5a3e3c">Drake</small></div>
+                            <input type="checkbox" class="track-checkbox" value="Drake - God's Plan" onclick="validateSelectionCount(this)">
+                        </div>
+
+                        <div class="track-item">
+                            <div><strong>bad guy</strong> <br><small style="color:#5a3e3c">Billie Eilish</small></div>
+                            <input type="checkbox" class="track-checkbox" value="Billie Eilish - bad guy" onclick="validateSelectionCount(this)">
+                        </div>
+
+                        <div class="track-item">
+                            <div><strong>Old Town Road</strong> <br><small style="color:#5a3e3c">Lil Nas X ft. Billy Ray Cyrus</small></div>
+                            <input type="checkbox" class="track-checkbox" value="Lil Nas X - Old Town Road" onclick="validateSelectionCount(this)">
+                        </div>
+                
+                        <div class="track-item">
+                            <div><strong>7 Rings</strong> <br><small style="color:#5a3e3c">Ariana Grande</small></div>
+                            <input type="checkbox" class="track-checkbox" value="Ariana Grande - 7 Rings" onclick="validateSelectionCount(this)">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 2px solid #4a2c2a;">
+                    <span id="counterLog" style="color:#833b3b; font-size:0.9rem">0 / 5 selected</span>
+                    <button type="button" class="spotify-save-btn" data-bs-dismiss="modal" onclick="syncSelectedPlaylist()">Add to Letter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade sticker-modal" id="stickerBookModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md" style="max-width: 440px;">
+            <div class="modal-content">
+                
+                <div class="sticker-modal-header-container">
+                    <h4 class="sticker-top-title">stickers</h4>
+                    <div class="sticker-modal-close-trigger" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i>
+                    </div>
+                </div>
+
+                <div class="sticker-scroll-wrapper">
+                    <div class="sticker-sketch-grid">
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image1.png')"><img src="Stickers/image1.png" alt="Sticker 1"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image2.png')"><img src="Stickers/image2.png" alt="Sticker 2"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image3.png')"><img src="Stickers/image3.png" alt="Sticker 3"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image4.png')"><img src="Stickers/image4.png" alt="Sticker 4"></div>
+                        
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image5.png')"><img src="Stickers/image5.png" alt="Sticker 5"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image6.png')"><img src="Stickers/image6.png" alt="Sticker 6"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image7.png')"><img src="Stickers/image7.png" alt="Sticker 7"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image8.png')"><img src="Stickers/image8.png" alt="Sticker 8"></div>
+                        
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image9.png')"><img src="Stickers/image9.png" alt="Sticker 9"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image10.png')"><img src="Stickers/image10.png" alt="Sticker 10"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image11.png')"><img src="Stickers/image11.png" alt="Sticker 11"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image12.png')"><img src="Stickers/image12.png" alt="Sticker 12"></div>
+
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image13.png')"><img src="Stickers/image13.png" alt="Sticker 13"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image14.png')"><img src="Stickers/image14.png" alt="Sticker 14"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image15.png')"><img src="Stickers/image15.png" alt="Sticker 15"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image16.png')"><img src="Stickers/image16.png" alt="Sticker 16"></div>
+
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image17.png')"><img src="Stickers/image17.png" alt="Sticker 17"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image18.png')"><img src="Stickers/image18.png" alt="Sticker 18"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image19.png')"><img src="Stickers/image19.png" alt="Sticker 19"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image20.png')"><img src="Stickers/image20.png" alt="Sticker 20"></div>
+
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image21.png')"><img src="Stickers/image21.png" alt="Sticker 21"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image22.png')"><img src="Stickers/image22.png" alt="Sticker 22"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image23.png')"><img src="Stickers/image23.png" alt="Sticker 23"></div>
+                        <div class="sticker-box-slot" onclick="appendSticker('Stickers/image24.png')"><img src="Stickers/image24.png" alt="Sticker 24"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const code = new URLSearchParams(location.search).get('error');
+        if (code) {
+          const messages = {
+            send_failed: 'Your letter could not be sent. Make sure you are writing to a penpal and that the letter is not empty.',
+          };
+          const message = messages[code] ?? 'Something went wrong. Please try again.';
+          const alertEl = document.getElementById('error-alert');
+          if (alertEl) { alertEl.textContent = message; alertEl.style.display = 'block'; }
+        }
+
+        
+        document.querySelector('.send-btn').addEventListener('click', () => {
+          const editor = document.getElementById('editor');
+          const body = editor.innerHTML;
+          const recipientId = new URLSearchParams(location.search).get('to')
+                           ?? sessionStorage.getItem('recipientId');
+
+          if (!editor.innerText.trim() || !recipientId) {
+            const alertEl = document.getElementById('error-alert');
+            if (alertEl) {
+              alertEl.textContent = !recipientId
+                ? 'No recipient found — go back to your dashboard and click Write on a penpal card.'
+                : 'Please write something before sending.';
+              alertEl.style.display = 'block';
+            }
+            return;
+          }
+const form = document.createElement('form');
+form.method = 'POST';
+form.action = '/Letter/Send';
+
+const fields = [
+    ['body', body],
+    ['recipientId', recipientId],
+    ['musicTitle', document.getElementById('musicTitle').value],
+    ['musicPath', document.getElementById('musicPath').value]
+];
+
+fields.forEach(([name, value]) => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+});
+
+document.body.appendChild(form);
+form.submit();
+        });
+      });
+    </script>
+
+    <script>
+        function format(command, value = null) {
+            document.execCommand(command, false, value);
+            document.getElementById('editor').focus();
+            updateToolbarState();
+        }
+
+        function insertEmoji(emoji) {
+            document.execCommand('insertText', false, emoji);
+            document.getElementById('editor').focus();
+        }
+
+        function updateToolbarState() {
+            const states = {
+                'tool-bold': 'bold',
+                'tool-italic': 'italic',
+                'tool-underline': 'underline',
+                'tool-strike': 'strikeThrough',
+                'tool-ol': 'insertOrderedList',
+                'tool-ul': 'insertUnorderedList',
+                'tool-left': 'justifyLeft',
+                'tool-center': 'justifyCenter',
+                'tool-right': 'justifyRight'
+            };
+
+            for (const [id, command] of Object.entries(states)) {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (document.queryCommandState(command)) {
+                        element.classList.add('active');
+                    } else {
+                        element.classList.remove('active');
+                    }
+                }
+            }
+        }
+
+        const editor = document.getElementById('editor');
+        editor.addEventListener('keyup', updateToolbarState);
+        editor.addEventListener('mouseup', updateToolbarState);
+        editor.addEventListener('click', updateToolbarState);
+
+        /* --- PLAYLIST PAIRING REGISTRATION LOGIC --- */
+        function validateSelectionCount(checkbox) {
+            const checkedBoxes = document.querySelectorAll('.track-checkbox:checked');
+            
+            if (checkedBoxes.length > 5) {
+                checkbox.checked = false;
+                alert("You can select up to 5 songs maximum for your playlist pairing!");
+                return;
+            }
+            
+            document.getElementById('counterLog').innerText = `${checkedBoxes.length} / 5 selected`;
+        }
+
+        function filterTracks() {
+            const query = document.getElementById('songSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.track-item');
+            
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                item.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        }
+
+        function syncSelectedPlaylist() {
+            const checkedBoxes = document.querySelectorAll('.track-checkbox:checked');
+            const display = document.getElementById('mp3Display');
+            
+            if (checkedBoxes.length === 0) {
+                display.innerHTML = '<p class="mini-track-node" style="color: #fcd0df; font-style: italic; opacity: 0.6;">No music added...</p>';
+                return;
+            }
+            
+            display.innerHTML = '';
+            checkedBoxes.forEach(box => {
+                const node = document.createElement('p');
+                node.className = 'mini-track-node';
+                node.innerText = `🎵 ${box.value}`;
+                display.appendChild(node);
+            });
+            const selectedSongs = [];
+        checkedBoxes.forEach(box => {
+            selectedSongs.push(box.value);
+        });
+        document.getElementById("musicTitle").value = selectedSongs.join(",");
+        }
+
+        /* --- STICKER PLACEMENT INSERTION ENGINE --- */
+        function appendSticker(imgUrl) {
+            const editorEl = document.getElementById('editor');
+            
+            const imgHtml = `<img src="${imgUrl}" class="placed-sticker-node" alt="sticker" contenteditable="false">`;
+            
+            editorEl.focus();
+            document.execCommand('insertHTML', false, imgHtml);
+            
+            const stickerModalEl = document.getElementById('stickerBookModal');
+            const modalInstance = bootstrap.Modal.getInstance(stickerModalEl);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        }
+    </script>
+</body>
+</html>

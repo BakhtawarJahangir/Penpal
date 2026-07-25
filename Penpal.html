@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penpal</title>
+    
+    <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #fcd0df; 
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Wrap the stamp to help center it in the first "screen" */
+        .stamp-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .stamp {
+            --radius: 15.5px; 
+            --inner-gap: 30px; 
+            display: inline-block;
+            padding: var(--inner-gap);
+            background-color: #fcd0df; 
+            height: 90vh; /* Reduced slightly to ensure it fits comfortably */
+            width: 90vh;
+            position: relative;
+            background-image: radial-gradient(circle at center, transparent 0, transparent var(--radius), white var(--radius));
+            background-size: calc(var(--radius) * 3) calc(var(--radius) * 3);
+            background-position: calc(var(--radius) * -1.5) calc(var(--radius) * -1.5);
+            background-repeat: round;
+        }
+
+        .image-container {
+            width: 100%; height: 100%;
+            background-color: #f8e6ec; 
+            position: relative; 
+            overflow: hidden;
+            border-radius: 7px;
+        }
+
+        .stamp img { 
+            display: block; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+        }
+
+        .bottom-text {
+            position: absolute; 
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            font-family: 'DynaPuff', sans-serif; 
+            font-size: 2rem; 
+            color: #4a2c2a; 
+            margin: 0; 
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+            white-space: nowrap;
+        }
+
+        .hero-section {
+            width: 100%; 
+            padding: 80px 10%; 
+            background-color: #f8e6ec;
+        }
+
+        .section-heading {
+            font-family: 'DynaPuff', sans-serif; 
+            font-size: 3.5rem; color: #4a2c2a; 
+            margin-bottom: 20px;
+        }
+
+        .hero-text { 
+            font-size: 1.2rem; 
+            color: #5a3e3c; 
+            margin-bottom: 30px; 
+            line-height: 1.6; 
+        }
+
+        /* Buttons updated for ASP.NET MVC compatibility */
+        .btn-start, .btn-card {
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+            background-color: #4a2c2a; 
+            color: white; 
+            font-family: 'DynaPuff', sans-serif;
+            padding: 12px 30px; 
+            border-radius: 50px; 
+            border: 2px solid #4a2c2a; 
+            transition: all 0.2s;
+        }
+
+        .btn-start:hover { 
+            background-color: #fcd0df; 
+            color: #4a2c2a; 
+            transform: scale(1.05); 
+        }
+
+        .btn-card {
+            background-color: transparent;
+            color: #4a2c2a;
+            padding: 10px 40px;
+            margin-top: auto;
+        }
+
+        .btn-card:hover {
+            background-color: #4a2c2a;
+            color: white;
+        }
+
+        .feature-grid {
+            padding: 80px 0;
+            background-color: white;
+            width: 100%;
+        }
+
+        .feature-card {
+            background-color: #fce8ee;
+            border-radius: 40px;
+            padding: 40px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: #fcd0df;
+            box-shadow: 0 15px 30px rgba(74,44,42,0.1);
+        }
+
+        .card-icon { 
+            font-size: 3rem; 
+            margin-bottom: 25px; 
+            display: block; }
+
+        .card-title { 
+            font-family: 'DynaPuff', sans-serif; 
+            font-size: 2rem; 
+            color: #4a2c2a; 
+            margin-bottom: 20px; }
+
+        .card-text { 
+            color: #5a3e3c; 
+            font-size: 1.1rem; 
+            line-height: 1.7; 
+            margin-bottom: 40px; }
+
+        .center-heading { 
+            text-align: center; 
+            font-size: 3rem; 
+            margin-bottom: 10px; }
+
+        .center-text { 
+            text-align: center; 
+            max-width: 700px; 
+            margin: 0 auto 60px auto; }
+
+        .hero-img { 
+            width: 100%; 
+            max-width: 500px; 
+            height: auto; 
+            border-radius: 7px;
+            animation: float 4s ease-in-out infinite; }
+
+        @keyframes float { 
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); } }
+
+        footer { 
+            width: 100%; 
+            padding: 20px 10%; 
+            background-color: white; 
+            border-top: 1px solid #fcd0df; 
+            text-align: left; }
+
+        .copyright-text { 
+            color: #5a3e3c; 
+            font-size: 0.9rem; 
+            margin: 0; 
+            opacity: 0.8; }
+
+    </style>
+</head>
+
+<body>
+    <div class="stamp-container">
+        <div class="stamp">
+            <div class="image-container">
+                <img src="Letter.png" alt="Stamp Image">
+                <p class="bottom-text">Penpal Connect</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-section">
+        <div class="container">
+            <div class="row align-items-center"> 
+                <div class="col-md-6 text-start">
+                    <h1 class="section-heading">Write from the Heart</h1>
+                    <p class="hero-text">
+                        PenPal Connect is your whimsical sanctuary for sharing letters, 
+                        digital treasures, and curated playlists. Start your journey 
+                        of connection today.
+                    </p>
+                    <a href="Login.html" class="btn-start">Start Writing</a>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="Letter2.png" alt="Hero Image" class="hero-img">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="feature-grid">
+        <div class="container">
+            <h1 class="section-heading center-heading">The Magic of Connection</h1>
+            <p class="hero-text center-text">Discover how we turn digital spaces into cozy corners for your favourite penpals.</p>
+            
+            <div class="row g-5"> 
+                <div class="col-lg-4 text-center">
+                    <div class="feature-card">
+                        <div>
+                            <span class="card-icon">✉️</span> <h2 class="card-title">The Art of Writing</h2>
+                            <p class="card-text">Pen your stories and share them with the world. Our platform makes every letter feel like a handwritten treasure.</p>
+                        </div>
+                        <a href="Login.html" class="btn-card">Learn More</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 text-center">
+                    <div class="feature-card">
+                        <div>
+                            <span class="card-icon">✨</span> <h2 class="card-title">Digital Sticker Packs</h2>
+                            <p class="card-text">Express your feelings with a touch of whimsy. Share your favorite sticker packs and decorate your messages.</p>
+                        </div>
+                        <a href="Login.html" class="btn-card">Explore Packs</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 text-center">
+                    <div class="feature-card">
+                        <div>
+                            <span class="card-icon">🎧</span> <h2 class="card-title">Playlist Pairing</h2>
+                            <p class="card-text">Curate your perfect soundtrack for your next adventure. Find music that matches your penpal's vibe.</p>
+                        </div>
+                        <a href="Login.html" class="btn-card">Create Playlist</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p class="copyright-text">© 2026 PenPal Connect. All rights reserved.</p>
+    </footer>
+
+    <script src="bootstrap-5.3.8-dist/js/bootstrap.min.js"></script>
+</body>
+</html>

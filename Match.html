@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penpal - Find a Friend</title>
+    
+    <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #fcd0df;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'DynaPuff', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            caret-color: transparent;
+        }
+
+        .match-container {
+            background-color: #f8e6ec;
+            width: 95%;
+            max-width: 600px;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(74, 44, 42, 0.1);
+            position: relative;
+        }
+
+        /* TOP PLAQUE */
+        .plaque {
+            background-color: #f8e6ec;
+            border: 4px solid #4a2c2a;
+            display: inline-block;
+            padding: 10px 30px;
+            position: relative;
+            margin-bottom: 50px;
+            color: #4a2c2a;
+            font-size: 1.8rem;
+        }
+
+        /* Decorative "screws" on the plaque from your sketch */
+        .plaque::before, .plaque::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            background-color: #4a2c2a;
+            border-radius: 50%;
+            transform: translateY(-50%);
+        }
+        .plaque::before { left: 10px; }
+        .plaque::after { right: 10px; }
+
+        /* THE DISPLAY BOX */
+        .display-box {
+            background-color: white;
+            border: 5px solid #4a2c2a;
+            height: 120px;
+            width: 80%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: #4a2c2a;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* THE LEVER SYSTEM */
+       /* THE LEVER SYSTEM - Re-aligned to the bottom of the box */
+        /* THE LEVER SYSTEM - Flipped to the Left Side */
+        .lever-base {
+            position: absolute;
+            left: -30px; /* Positioned to the left of the box */
+            bottom: 0px; 
+            width: 15px;
+            height: 100px;
+            background-color: #4a2c2a;
+            transform-origin: bottom center;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .lever-knob {
+            position: absolute;
+            top: -25px;
+            left: -12.5px;
+            width: 40px;
+            height: 40px;
+            background-color: #833b3b;
+            border-radius: 50%;
+            border: 3px solid #4a2c2a;
+        }
+
+        /* Updated joint to connect from the left */
+        .lever-joint {
+            position: absolute;
+            left: 15px;
+            bottom: 0;
+            width: 20px;
+            height: 10px;
+            background-color: #4a2c2a;
+        }
+
+        /* Pulling animation */
+        .lever-base.pulled {
+            transform: rotateX(60deg) scaleY(0.5);
+        }
+
+        .done-btn {
+            background-color: #4a2c2a;
+            color: white;
+            border: none;
+            padding: 12px 60px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            margin-top: 50px;
+            transition: 0.2s;
+            opacity: 0.5; /* Disabled until matched */
+            pointer-events: none;
+        }
+
+        .done-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Spinning text animation */
+        @keyframes shuffle {
+            0% { opacity: 0; transform: translateY(-20px); }
+            50% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+
+        .shuffling {
+            animation: shuffle 0.1s infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="match-container">
+        <div class="plaque">PULL THE LEVER</div>
+
+        <!-- Wrapper narrowed to 70% to make the box smaller widthwise -->
+        <div style="position: relative; width: 70%; margin: 0 auto;">
+            
+            <!-- The Display Box -->
+            <div class="display-box" id="displayBox" style="width: 100%; margin: 0;">
+                <span id="nameLabel">???</span>
+            </div>
+
+            <!-- Lever System - Now anchors to the left -->
+            <div class="lever-base" id="lever" onclick="pullLever()">
+                <div class="lever-knob"></div>
+                <div class="lever-joint"></div>
+            </div>
+        </div>
+
+        <button class="done-btn" id="doneBtn" onclick="location.href='Dashboard.html'">DONE</button>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        let isSpinning = false;
+
+        function pullLever() {
+            if (isSpinning) return;
+            isSpinning = true;
+
+            const lever   = document.getElementById('lever');
+            const label   = document.getElementById('nameLabel');
+            const doneBtn = document.getElementById('doneBtn');
+
+            lever.classList.add('pulled');
+
+            const fetchPromise = fetch('/Match/Find', { method: 'POST' }).then(r => r.json());
+            const minDelay     = new Promise(resolve => setTimeout(resolve, 2000));
+
+            setTimeout(() => {
+                lever.classList.remove('pulled');
+                label.classList.add('shuffling');
+            }, 300);
+
+            Promise.all([fetchPromise, minDelay])
+                .then(([data]) => {
+                    label.classList.remove('shuffling');
+                    label.innerText = (data.penpal && data.penpal.name) ? data.penpal.name : '???';
+                    doneBtn.classList.add('active');
+                    isSpinning = false;
+                })
+                .catch(() => {
+                    label.classList.remove('shuffling');
+                    label.innerText = 'Try again';
+                    isSpinning = false;
+                });
+        }
+    </script>
+</body>
+</html>

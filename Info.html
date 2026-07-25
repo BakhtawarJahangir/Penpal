@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penpal - Info</title>
+    
+    <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #fcd0df; 
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'DynaPuff', sans-serif;
+            margin: 0;
+            user-select: none;
+            caret-color: transparent;
+            overflow: hidden;
+        }
+
+        input {
+            user-select: text;
+            caret-color: auto; 
+        }
+
+        .info-container {
+            background-color: #f8e6ec;
+            width: 95%;
+            max-width: 650px;
+            padding: 25px 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(74, 44, 42, 0.1);
+            position: relative;
+        }
+
+        .info-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #4a2c2a;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .label-text {
+            color: #4a2c2a;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .info-input {
+            background-color: white;
+            border: none;
+            border-bottom: 2px solid #4a2c2a;
+            border-radius: 0;
+            margin-bottom: 15px;
+            font-family: sans-serif;
+            width: 100%;
+            padding: 2px 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Compact Stamp Pic */
+        .profile-stamp {
+            --radius: 6px;
+            background-color: #f8e6ec;
+            padding: 10px;
+            width: 150px;
+            height: 190px;
+            margin: 0 auto;
+            position: relative;
+            background-image: radial-gradient(circle at center, transparent 0, transparent var(--radius), white var(--radius));
+            background-size: calc(var(--radius) * 3) calc(var(--radius) * 3);
+            background-position: calc(var(--radius) * -1.5) calc(var(--radius) * -1.5);
+            background-repeat: round;
+        }
+
+        .profile-stamp .pic-placeholder {
+            background-color: #fcd0df;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #4a2c2a;
+            font-size: 1.1rem;
+            border: 2px dashed #4a2c2a;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .profile-stamp .pic-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+            max-height: 95px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .tag-container::-webkit-scrollbar { width: 4px; }
+        .tag-container::-webkit-scrollbar-thumb { background: #4a2c2a; border-radius: 10px; }
+
+        .tag-btn {
+            background-color: transparent;
+            border: 1.5px solid #4a2c2a;
+            border-radius: 20px;
+            padding: 3px 12px;
+            color: #4a2c2a;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .tag-btn:hover {
+            background-color: #4a2c2a;
+            color: white;
+        }
+
+        /* Persistent Selection State Toggle Color Rules */
+        .tag-btn.active {
+            background-color: #4a2c2a;
+            color: white;
+        }
+
+        .done-btn {
+            background-color: #4a2c2a;
+            color: white;
+            border: none;
+            padding: 10px 60px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            display: block;
+            margin: 20px auto 0 auto;
+            transition: transform 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .done-btn:hover {
+            transform: scale(1.05);
+            background-color: #833b3b;
+        }
+
+        .row {
+            margin-bottom: 0;
+        }
+
+        .sticker-modal .modal-content {
+            background-color: #f8e6ec;
+            border: 4px solid #4a2c2a;
+            border-radius: 0px; 
+            padding: 20px;
+            position: relative;
+        }
+
+        .sticker-modal-header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .sticker-top-title {
+            font-family: 'DynaPuff', sans-serif;
+            font-size: 2.2rem;
+            color: #4a2c2a;
+            text-align: center;
+            margin: 0;
+            text-transform: lowercase;
+            user-select: none;
+        }
+
+        .sticker-modal-close-trigger {
+            position: absolute;
+            right: 0;
+            top: 5px;
+            width: 36px;
+            height: 36px;
+            background-color: white;
+            border: 3px solid #4a2c2a;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+            color: #4a2c2a;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            z-index: 10;
+        }
+
+        .sticker-modal-close-trigger:hover {
+            background-color: #4a2c2a;
+            color: white;
+        }
+
+        .sticker-grid-wrapper {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .sticker-sketch-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .sticker-box-slot {
+            background-color: white;
+            border: 2px solid #4a2c2a;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .sticker-box-slot:hover {
+            transform: scale(1.05);
+            box-shadow: 4px 4px 0px rgba(74, 44, 42, 0.1);
+        }
+
+        .sticker-box-slot img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="info-container">
+        <h1 class="info-title">INFO</h1>
+
+        <form action="/Account/UpdateProfile" method="post" style="margin: 0;">
+            <input type="hidden" name="avatarSticker" id="infoAvatarInput" value="">
+
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <label class="label-text">Name:</label>
+                    <input type="text" name="name" class="info-input" required>
+
+                    <label class="label-text">Age:</label>
+                    <input type="number" name="age" class="info-input" required>
+
+                    <label class="label-text">Country:</label>
+                    <input type="text" name="country" class="info-input" required>
+                </div>
+
+                <div class="col-md-5 text-center">
+                    <div class="profile-stamp">
+                        <div class="pic-placeholder" id="infoStampDisplay" data-bs-toggle="modal" data-bs-target="#infoAvatarModal">
+                            <span id="infoPlaceholderText">Pic</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <label class="label-text mt-2">Likes:</label>
+            <div class="tag-container">
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ travelling</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ food</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ books</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ comics</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ anime</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ sports</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ art</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ music</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ birds</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ bugs</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ movies</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ animals</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ mountains</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ beaches</button>
+            </div>
+
+            <label class="label-text">Dislikes:</label>
+            <div class="tag-container">
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ chaos</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ noise</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ unorganized people</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ math</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ taxes</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ fast food</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ fake news</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ animal abuse</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ extreme weather</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ injustice</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ ads</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ homework</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ phone calls</button>
+                <button type="button" class="tag-btn" onclick="toggleTag(this)">+ doing the dishes</button>
+            </div>
+
+            <button type="submit" class="done-btn text-center">DONE</button>
+        </form>
+    </div>
+
+    <div class="modal fade sticker-modal" id="infoAvatarModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md" style="max-width: 440px;">
+            <div class="modal-content">
+                
+                <div class="sticker-modal-header-container">
+                    <h4 class="sticker-top-title">Profile Picture</h4>
+                    <div class="sticker-modal-close-trigger" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i>
+                    </div>
+                </div>
+
+                <div class="sticker-grid-wrapper">
+                    <div class="sticker-sketch-grid">
+                        <div class="sticker-box-slot" onclick="selectInfoAvatar('Stickers/image25.png')"><img src="Stickers/image25.png" alt="Avatar 1"></div>
+                        <div class="sticker-box-slot" onclick="selectInfoAvatar('Stickers/image26.png')"><img src="Stickers/image26.png" alt="Avatar 2"></div>
+                        <div class="sticker-box-slot" onclick="selectInfoAvatar('Stickers/image27.png')"><img src="Stickers/image27.png" alt="Avatar 3"></div>
+                        <div class="sticker-box-slot" onclick="selectInfoAvatar('Stickers/image28.png')"><img src="Stickers/image28.png" alt="Avatar 4"></div>
+                        
+                        <div class="sticker-box-slot" onclick="selectInfoAvatar('Stickers/image29.png')"><img src="Stickers/image29.png" alt="Avatar 5"></div>
+                        <div class="sticker-box-slot" onclick="selectInfoAvatar('Stickers/image30.png')"><img src="Stickers/image30.png" alt="Avatar 6"></div>
+                        <div class="sticker-box-slot" onclick="selectInfoAvatar('Stickers/image31.png')"><img src="Stickers/image31.png" alt="Avatar 7"></div>
+                        <div class="sticker-box-slot" onclick="selectInfoAvatar('Stickers/image32.png')"><img src="Stickers/image32.png" alt="Avatar 8"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Error display — reads ?error= appended by server.js on a failed
+      // POST /Account/UpdateProfile redirect.
+      document.addEventListener('DOMContentLoaded', () => {
+        const code = new URLSearchParams(location.search).get('error');
+        if (!code) return;
+
+        const messages = {
+          update_failed: 'Could not save your profile. Please try again.',
+        };
+        const message = messages[code] ?? 'Something went wrong. Please try again.';
+
+        // TODO(frontend): render `message` into the page.
+        // Add a <div class="alert alert-danger"> element inside .info-container,
+        // above the <form>, using DynaPuff font and Penpal Brown (#4a2c2a) to
+        // match the existing .info-title styling.  Set its textContent to `message`.
+      });
+    </script>
+
+    <script>
+        function toggleTag(button) {
+            button.classList.toggle('active');
+        }
+
+        // TODO(frontend): wire likes/dislikes into the form POST body.
+        // toggleTag() only adds/removes the .active CSS class — the values are
+        // NOT serialised by the browser automatically because these are
+        // type="button" elements, not checkboxes.  Before the form submits, a
+        // presubmit handler must collect every .tag-btn.active element inside
+        // the Likes section into a hidden <input name="likes"> (repeating or
+        // comma-separated), and do the same for Dislikes into name="dislikes".
+        // The text content of each active button (stripped of the leading "+ ")
+        // is the tag value the server expects.  See toTagArray() in server.js
+        // for the accepted formats.
+
+        function selectInfoAvatar(avatarUrl) {
+            const stampDisplay = document.getElementById('infoStampDisplay');
+            const hiddenInput = document.getElementById('infoAvatarInput');
+            
+            stampDisplay.innerHTML = `<img src="${avatarUrl}" alt="Chosen Avatar">`;
+            hiddenInput.value = avatarUrl;
+            
+            const avatarModalEl = document.getElementById('infoAvatarModal');
+            const modalInstance = bootstrap.Modal.getInstance(avatarModalEl);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        }
+    </script>
+</body>
+</html>

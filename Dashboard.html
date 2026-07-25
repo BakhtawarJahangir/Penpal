@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penpal - My Penpals</title>
+    
+    <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #fcd0df;
+            min-height: 100vh;
+            font-family: 'DynaPuff', sans-serif;
+            margin: 0;
+            padding: 40px;
+            caret-color: transparent;
+        }
+
+        .header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+        }
+
+        .title {
+            font-size: 3rem;
+            color: #4a2c2a;
+            letter-spacing: 3px;
+        }
+
+        .profile-icon {
+            font-size: 3rem;
+            color: #4a2c2a;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .profile-icon:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- THE ENVELOPE CARD (From WD7.jpeg) --- */
+        .penpal-card {
+            background-color: white;
+            max-width: 500px;
+            padding: 25px;
+            border-radius: 15px;
+            position: relative;
+            border: 10px solid transparent;
+            border-image: repeating-linear-gradient(45deg, #833b3b, #833b3b 10px, white 10px, white 20px, #4a2c2a 20px, #4a2c2a 30px, white 30px, white 40px) 10;
+            box-shadow: 10px 10px 0px rgba(74, 44, 42, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mini-stamp {
+            width: 60px;
+            height: 80px;
+            border: 2px dashed #4a2c2a;
+            background-color: #f8e6ec;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-info p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #4a2c2a;
+        }
+
+        .card-buttons {
+            display: flex;
+            gap: 10px; /* Reduced gap slightly to fit three buttons neatly */
+            margin-top: 20px;
+        }
+
+        .btn-action {
+            background-color: transparent;
+            border: 2px solid #4a2c2a;
+            border-radius: 30px;
+            padding: 5px 15px; /* Compact padding horizontal baseline adjustment */
+            color: #4a2c2a;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .btn-action:hover {
+            background-color: #4a2c2a;
+            color: white;
+        }
+
+        /* --- ACTION COLUMN (The + and X circles) --- */
+        .action-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+            padding-left: 30px;
+        }
+
+        .circle-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid #4a2c2a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #4a2c2a;
+            background: none;
+            transition: 0.2s;
+        }
+
+        .circle-btn:hover {
+            background-color: #4a2c2a;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* --- EDITABLE PROFILE PANEL STYLING (From WD11.jpeg) --- */
+        .profile-sidebar {
+            background-color: #f8e6ec !important;
+            border-left: 4px solid #4a2c2a !important;
+            width: 400px !important;
+            font-family: 'DynaPuff', sans-serif;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #4a2c2a;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .sidebar-title {
+            color: #4a2c2a;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .btn-close-custom {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #4a2c2a;
+            cursor: pointer;
+        }
+
+        .profile-field-group {
+            margin-bottom: 20px;
+        }
+
+        .field-label {
+            color: #4a2c2a;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .profile-input {
+            background-color: white;
+            border: 2px solid transparent;
+            border-bottom: 3px solid #4a2c2a;
+            border-radius: 8px;
+            width: 100%;
+            padding: 8px 12px;
+            font-family: sans-serif;
+            font-size: 1rem;
+            color: #4a2c2a;
+            caret-color: #4a2c2a;
+        }
+
+        .profile-input:focus {
+            outline: none;
+            border-color: #4a2c2a;
+            background-color: #ffffff;
+        }
+
+        .sidebar-stamp {
+            --radius: 6px;
+            background-color: white;
+            padding: 10px;
+            width: 120px;
+            height: 150px;
+            margin: 0 auto 25px auto;
+            position: relative;
+            background-image: radial-gradient(circle at center, transparent 0, transparent var(--radius), #f8e6ec var(--radius));
+            background-size: calc(var(--radius) * 3) calc(var(--radius) * 3);
+            background-position: calc(var(--radius) * -1.5) calc(var(--radius) * -1.5);
+            background-repeat: round;
+            filter: drop-shadow(2px 4px 8px rgba(74,44,42,0.1));
+        }
+
+        .sidebar-stamp .stamp-inside {
+            background-color: #fcd0df;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #4a2c2a;
+            font-size: 1rem;
+            border: 2px dashed #4a2c2a;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .sidebar-stamp .stamp-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .save-profile-btn {
+            background-color: #4a2c2a;
+            color: white;
+            border: none;
+            padding: 10px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            display: block;
+            margin: 30px auto 0 auto;
+            transition: transform 0.2s;
+            font-family: 'DynaPuff', sans-serif;
+        }
+
+        .save-profile-btn:hover {
+            transform: scale(1.05);
+            color: #fcd0df;
+        }
+
+        /* --- STICKER BOOK MODAL SYSTEM (NO SCROLLBAR) --- */
+        .sticker-modal .modal-content {
+            background-color: #f8e6ec;
+            border: 4px solid #4a2c2a;
+            border-radius: 0px; 
+            padding: 20px;
+            position: relative;
+        }
+
+        .sticker-modal-header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .sticker-top-title {
+            font-family: 'DynaPuff', sans-serif;
+            font-size: 2.2rem;
+            color: #4a2c2a;
+            text-align: center;
+            margin: 0;
+            text-transform: lowercase;
+            user-select: none;
+        }
+
+        /* Circular Close Button (X) */
+        .sticker-modal-close-trigger {
+            position: absolute;
+            right: 0;
+            top: 5px;
+            width: 36px;
+            height: 36px;
+            background-color: white;
+            border: 3px solid #4a2c2a;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+            color: #4a2c2a;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            z-index: 10;
+        }
+
+        .sticker-modal-close-trigger:hover {
+            background-color: #4a2c2a;
+            color: white;
+        }
+
+        /* Clean wrapper layout container context layout window */
+        .sticker-grid-wrapper {
+            width: 100%;
+            overflow: hidden; /* Clears any scrolling elements entirely */
+        }
+
+        /* Grid Layout mapping exactly 4 items per row */
+        .sticker-sketch-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .sticker-box-slot {
+            background-color: white;
+            border: 2px solid #4a2c2a;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .sticker-box-slot:hover {
+            transform: scale(1.05);
+            box-shadow: 4px 4px 0px rgba(74, 44, 42, 0.1);
+        }
+
+        .sticker-box-slot img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-area">
+            <h1 class="title">PENPALS</h1>
+            <i class="bi bi-person-circle profile-icon" data-bs-toggle="offcanvas" data-bs-target="#profileSidebar" aria-controls="profileSidebar"></i>
+        </div>
+
+        <div class="row align-items-center">
+            <div id="penpals-container"></div>
+
+            <div class="col-auto">
+                <div class="action-column">
+                    <button class="circle-btn" title="Remove Penpal">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                    <button class="circle-btn" title="Find New Penpal" onclick="location.href='Match.html'">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-end profile-sidebar" tabindex="-1" id="profileSidebar" aria-labelledby="profileSidebarLabel">
+        <div class="sidebar-header">
+            <h5 class="sidebar-title" id="profileSidebarLabel">MY PROFILE</h5>
+            <button type="button" class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="bi bi-x-circle-fill"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+            <form action="/Account/UpdateProfile" method="post">
+                
+                <input type="hidden" name="avatarSticker" id="selectedAvatarInput" value="">
+
+                <div class="sidebar-stamp">
+                    <div class="sidebar-stamp text-center" style="margin: 0; width: 100%; height: 100%; padding: 0;">
+                        <div class="stamp-inside" id="profileStampContainer" data-bs-toggle="modal" data-bs-target="#profileAvatarModal">
+                            <span id="stampPlaceholderText">Pic</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-field-group">
+                    <label class="field-label">Name:</label>
+                    <input type="text" id="sidebarNameInput" name="name" class="profile-input" value="" required>
+                </div>
+
+                <div class="profile-field-group">
+                    <label class="field-label">Age:</label>
+                    <input type="number" id="sidebarAgeInput" name="age" class="profile-input" value="" required>
+                </div>
+
+                <div class="profile-field-group">
+                    <label class="field-label">Country:</label>
+                    <input type="text" id="sidebarCountryInput" name="country" class="profile-input" value="" required>
+                </div>
+
+                <button type="submit" class="save-profile-btn">SAVE</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade sticker-modal" id="profileAvatarModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered modal-md" style="max-width: 440px;">
+            <div class="modal-content">
+                
+                <div class="sticker-modal-header-container">
+                    <h4 class="sticker-top-title">Profile Picture</h4>
+                    <div class="sticker-modal-close-trigger" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i>
+                    </div>
+                </div>
+
+                <div class="sticker-grid-wrapper">
+                    <div class="sticker-sketch-grid">
+                        <div class="sticker-box-slot" onclick="updateProfileAvatar('Stickers/image25.png')"><img src="Stickers/image25.png" alt="Avatar 1"></div>
+                        <div class="sticker-box-slot" onclick="updateProfileAvatar('Stickers/image26.png')"><img src="Stickers/image26.png" alt="Avatar 2"></div>
+                        <div class="sticker-box-slot" onclick="updateProfileAvatar('Stickers/image27.png')"><img src="Stickers/image27.png" alt="Avatar 3"></div>
+                        <div class="sticker-box-slot" onclick="updateProfileAvatar('Stickers/image28.png')"><img src="Stickers/image28.png" alt="Avatar 4"></div>
+                        
+                        <div class="sticker-box-slot" onclick="updateProfileAvatar('Stickers/image29.png')"><img src="Stickers/image29.png" alt="Avatar 5"></div>
+                        <div class="sticker-box-slot" onclick="updateProfileAvatar('Stickers/image30.png')"><img src="Stickers/image30.png" alt="Avatar 6"></div>
+                        <div class="sticker-box-slot" onclick="updateProfileAvatar('Stickers/image31.png')"><img src="Stickers/image31.png" alt="Avatar 7"></div>
+                        <div class="sticker-box-slot" onclick="updateProfileAvatar('Stickers/image32.png')"><img src="Stickers/image32.png" alt="Avatar 8"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="api.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            getMe();
+            listMatches();
+        });
+
+        function updateProfileAvatar(avatarUrl) {
+            const stampContainer = document.getElementById('profileStampContainer');
+            const hiddenInput = document.getElementById('selectedAvatarInput');
+            
+            stampContainer.innerHTML = `<img src="${avatarUrl}" alt="Selected Avatar">`;
+            hiddenInput.value = avatarUrl;
+            
+            const avatarModalEl = document.getElementById('profileAvatarModal');
+            const modalInstance = bootstrap.Modal.getInstance(avatarModalEl);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        }
+    </script>
+</body>
+</html>
