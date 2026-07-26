@@ -1,7 +1,6 @@
 # PenPal Connect
 
 PenPal Connect is a full-stack academic web application developed as a university team project. It allows users to create profiles, get matched with penpals, and exchange digital letters through a secure and interactive platform. The project aims to connect people worldwide through thoughtful digital letters, encouraging meaningful communication and cultural exchange between randomly matched penpals.
----  
 
 ## Features
 
@@ -14,7 +13,7 @@ PenPal Connect is a full-stack academic web application developed as a universit
 - Responsive user interface built with Bootstrap
 - SQL Server database integration
 - RESTful API-based communication
----
+
 ## Technologies Used
 
 ### Frontend
@@ -39,8 +38,9 @@ PenPal Connect is a full-stack academic web application developed as a universit
 ### Other
 - Express Session
 - bcrypt (Password Hashing)
----
+
 ## Screenshots
+
 ### Login Page
 ![Login](Screenshots/login.png)
 
@@ -61,9 +61,8 @@ PenPal Connect is a full-stack academic web application developed as a universit
 
 ### Read Letter
 ![Read Letter](Screenshots/read-letter.png)
----
 
-## Quick start
+## Quick Start
 
 ```bash
 npm install
@@ -73,34 +72,31 @@ npm start
 
 Two test accounts are seeded automatically (bcrypt hashing takes ~1 second on startup):
 
-| Name  | Email          | Password    |
-|-------|----------------|-------------|
+| Name | Email | Password |
+|------|-------|----------|
 | Alice | alice@test.com | password123 |
-| Bob   | bob@test.com   | password123 |
+| Bob | bob@test.com | password123 |
 
----
-
-## Project structure
+## Project Structure
 
 ```text
-server.js               ← Express server and backend routes
-api.js                  ← Client-side API functions and data fetching
+server.js
+api.js
 data/
-  users.js              ← User data management
-  matches.js            ← Penpal matching logic
-  letters.js            ← Letter management
-Penpal .html            ← Landing page
-Login.html              ← User authentication (Sign In / Sign Up)
-Info.html               ← User profile setup
-Match.html              ← Penpal matching interface
-Dashboard.html          ← User dashboard and penpal overview
-Read.html               ← Read received letters
-Write.html              ← Compose and send letters
-bootstrap-5.3.8-dist/   ← Bootstrap CSS and JavaScript files
-Stickers/               ← Sticker and avatar images
+  users.js
+  matches.js
+  letters.js
+Penpal.html
+Login.html
+Info.html
+Match.html
+Dashboard.html
+Read.html
+Write.html
+bootstrap-5.3.8-dist/
+Stickers/
 ```
 
----
 ## Application Workflow
 
 1. User registers or logs into the application.
@@ -108,25 +104,20 @@ Stickers/               ← Sticker and avatar images
 3. The system matches the user with a random penpal.
 4. Users can compose and send digital letters.
 5. Recipients receive and read letters from their inbox.
-6. Users can personalize letters with stickers and music playlists.
-
----
+6. Users can continue conversations by exchanging digital letters.
 
 ## Database
 
 The application uses SQL Server to store user accounts, user profiles, penpal matches, digital letters, and music playlist information.
----
 
 ## Backend
 
 The backend is developed using Node.js and Express.js. It handles user authentication, session management, RESTful API endpoints, penpal matching, digital letter exchange, and communication with the SQL Server database.
----
 
 ## Frontend
 
 The frontend is built using HTML5, CSS3, Bootstrap, and JavaScript. It provides responsive pages for user authentication, profile management, penpal matching, and letter exchange.
 
----
 ## Future Improvements
 
 - Interest-based penpal matching
@@ -135,4 +126,3 @@ The frontend is built using HTML5, CSS3, Bootstrap, and JavaScript. It provides 
 - More letter themes, stickers, and personalization options
 - User profile editing and account management
 - Cloud deployment using Azure or Render
-
