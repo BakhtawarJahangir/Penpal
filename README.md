@@ -40,27 +40,27 @@ PenPal Connect is a full-stack academic web application developed as a universit
 - Express Session
 - bcrypt (Password Hashing)
 ---
-## Screenshots
+## Screenshot
 ### Login Page
-![Login](Screenshots/login.png)
+![Login](./Screenshot/login.png)
 
 ### Sign Up Page
-![Sign Up](Screenshots/signup.png)
+![Sign Up](./Screenshot/signup.png)
 
 ### Dashboard
-![Dashboard](Screenshots/dashboard.png)
+![Dashboard](./Screenshot/dashboard.png)
 
 ### Match Penpal
-![Match](Screenshots/match.png)
+![Match](./Screenshot/match.png)
 
 ### Write Letter
-![Write Letter](Screenshots/write-letter.png)
+![Write Letter](./Screenshot/write-letter.png)
 
 ### Letter Received
-![Letter Received](Screenshots/letter-received.png)
+![Letter Received](./Screenshot/letter-received.png)
 
 ### Read Letter
-![Read Letter](Screenshots/read-letter.png)
+![Read Letter](./Screenshot/read-letter.png)
 ---
 
 ## Quick start
